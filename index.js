@@ -18,6 +18,7 @@ async function run() {
         await client.connect();
         const database = client.db("rent-car");
         const servicesCollection = database.collection("services");
+        const bookingsCollection = database.collection("bookings");
         const addReviewsCollection = database.collection("add-reviews");
 
         // services get
@@ -47,6 +48,22 @@ async function run() {
             const service = req.body;
             const result = await servicesCollection.insertOne(service);
             res.json(result)
+        })
+
+        // get bookings
+        app.get('/bookings', async(req, res) => {
+            const email = req.query.email;
+            const query = {email: email};
+            const cursor = bookingsCollection.find(query);
+            const booking = await cursor.toArray();
+            res.json(booking);
+        })
+
+        // post bookings
+        app.post('/bookings', async(req, res) => {
+            const booking = req.body;
+            const result = await bookingsCollection.insertOne(booking);
+            res.json(result);
         })
 
         // add reviews get
