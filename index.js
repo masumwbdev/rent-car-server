@@ -20,6 +20,12 @@ async function run() {
         const servicesCollection = database.collection("services");
         const bookingsCollection = database.collection("bookings");
         const addReviewsCollection = database.collection("add-reviews");
+        const usersCollection = database.collection("users");
+        
+
+        // +++++++++++++++ APIS +++++++++++++++++++
+
+        // ---------- SERVICES API -----------
 
         // services get
         app.get('/services', async (req, res) => {
@@ -50,6 +56,9 @@ async function run() {
             res.json(result)
         })
 
+
+        // ---------- BOOKING API -----------
+
         // get bookings
         app.get('/bookings', async(req, res) => {
             const email = req.query.email;
@@ -66,6 +75,17 @@ async function run() {
             res.json(result);
         })
 
+        // delete booking
+        app.delete('/bookings/:id', async(req,res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await bookingsCollection.deleteOne(query);
+            res.json(result);
+        })
+
+
+        // ---------- REVIEWS API -----------
+
         // add reviews get
         app.get('/add-reviews', async(req, res) => {
             const cursor = addReviewsCollection.find({});
@@ -80,13 +100,15 @@ async function run() {
             res.json(result);
         })
 
-        // delete booking
-        app.delete('/bookings/:id', async(req,res) => {
-            const id = req.params.id;
-            const query = {_id: ObjectId(id)};
-            const result = await bookingsCollection.deleteOne(query);
+
+        // ---------- USERS API -----------
+
+        app.post('/users', async(req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
             res.json(result);
         })
+
 
     } finally {
         //   await client.close();
